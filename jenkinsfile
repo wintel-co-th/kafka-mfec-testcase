@@ -29,6 +29,11 @@ pipeline {
        	//Kafka bridge 
 
         kafak_bridge_ingres = 'kafka-bridge-thdlcd01-uat.aiaazure.biz'
+	
+	// authentication
+	user_kafka = 'chaiyapon'
+	
+	
 
     }
 
@@ -174,12 +179,53 @@ pipeline {
 		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.1/customer-topic.yaml"
 		  sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  examples/bridge/kafka-bridge-aia.yaml"
 		  sh 'kubectl  apply -f  6.1/customer-topic.yaml'	  
-		  // check topic ustomer
+		  // check topic customer
 		  sh 'kubectl get kt -n ${NAMESPACE} |grep -i customer '
             
             }
         }
 	
+	
+		 stage('6.2: Testing Create User') {
+             steps {
+	              
+                // list  user
+		sh 'kubectl get ku -n ${NAMESPACE} '
+		// create user 
+	        sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.2/kafka-user.yaml"
+		sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  6.2/kafka-user.yaml"
+		sh "sed -i 's|my-user|${user_kafka}|g'  6.2/kafka-user.yaml"
+		sh 'kubectl apply -f  6.2/kafka-user.yaml || true'
+		
+		// check user 
+		sh 'kubectl get ku -n ${NAMESPACE}'
+		
+            
+            }
+        }
+	
+	
+		 stage('6.3: Testing Kafka User  auth https/ssl') {
+             steps {
+	              
+                // Check  user chaiyapon with tls already exist
+		sh 'kubectl get ku -n ${NAMESPACE} '
+		
+		// Extract and configure the user credentials
+		
+		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.crt}' -n ${NAMESPACE} | base64 --decode > 6.3/user.crt'
+		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.key}' -n ${NAMESPACE} | base64 --decode > 6.3/user.key'
+		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.p12}' -n ${NAMESPACE} | base64 --decode > 6.3/user.p12'
+		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.password}' -n ${NAMESPACE} | base64 --decode > 6.3/user.password'
+	       // Import the entry in user.p12 into another keystore
+	       
+	       
+		
+
+		
+            
+            }
+        }
         
 	
 
