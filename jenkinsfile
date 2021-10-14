@@ -1,1 +1,131 @@
-hello jenkins
+pipeline {
+    agent any
+    
+    parameters {
+        gitParameter name: 'BRANCH_TAG', 
+                     type: 'PT_BRANCH_TAG',
+                     defaultValue: 'master'
+    }
+    
+    
+      environment {
+     
+        git_url = 'https://github.com/wintel-co-th/kafka-uat-cd-mfec.git'
+        // AZURE RESOURCE
+        AcrRegistry = 'wintelhub.azurecr.io'                        // acrth01seanshared01
+        AcrRegistry_prod  = 'acrth01seapshared01'
+
+
+        AZ_AKZ_USER = 'azure-chaiyapon'
+        AZ_AKS_RESOUCE_GROUP = 'AKS-Cluster'
+        
+	    	// AZURE AKS Cluster
+        az_cluster_name = 'wintel'
+        NAMESPACE = 'kafka'  
+
+		
+
+
+    }
+
+  
+    stages {
+    
+    
+           stage('Azure Login'){
+            steps {
+
+                 withCredentials([azureServicePrincipal('azure-chaiyapon')]) {
+                  sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID' 
+                  sh 'az account show'
+            }
+       }
+    }
+         
+    
+           stage('Get credentials Azure AKS'){
+            steps {
+                     
+                     //cleanup current user k8s credentials
+                    sh 'rm -rf   ~/.kube || true'
+                    sh "echo ============ AKS Credential ==============="
+                    sh "az aks get-credentials -n ${az_cluster_name} -g ${AZ_AKS_RESOUCE_GROUP}"
+            }      
+       }
+    
+   
+		
+		  stage('GitClone') {
+              steps {
+                script {
+                    def scmInfo = checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '${BRANCH_TAG}']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [
+                            [credentialsId: 'git_credentials',
+                            url: env.git_url]
+                        ]
+                    ])
+                    
+                }
+            }
+        }
+		
+		 stage('2.1: Testing Down Kafka Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down kafk-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify kafka-o up and running
+                   sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+        
+        
+    	 stage('2.1: Testing Down Kafka Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down kafk-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify kafka-o up and running
+                   sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+        
+        
+        
+
+ 
+        
+        
+
+        
+
+        
+ 
+        
+        
+
+        
+       
+       
+        
+    }
+   
+}
+      
