@@ -96,7 +96,7 @@ pipeline {
 		sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  6.2/kafka-user.yaml"
 		sh "sed -i 's|my-user|${user_kafka}|g'  6.2/kafka-user.yaml"
 		sh 'kubectl apply -f  6.2/kafka-user.yaml || true'
-		
+		sh 'sleep 2m'
 		// check user 
 		sh 'kubectl get ku -n ${NAMESPACE}'
 		
