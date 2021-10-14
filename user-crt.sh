@@ -8,8 +8,8 @@ kubectl get secret my-user -o jsonpath='{.data.user\.password}' -n ${NAMESPACE} 
 
 ## Import the entry in user.p12 into another keystore
 
-export USER_P12_FILE_PATH= 6.3/user.p12
-export USER_KEY_PASSWORD_FILE_PATH= 6.3/user.password
+export USER_P12_FILE_PATH=6.3/user.p12
+export USER_KEY_PASSWORD_FILE_PATH=6.3/user.password
 export KEYSTORE_NAME=kafka-auth-keystore.jks
 export KEYSTORE_PASSWORD=foobar
 export PASSWORD=`cat $USER_KEY_PASSWORD_FILE_PATH
