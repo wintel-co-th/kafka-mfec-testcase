@@ -25,6 +25,7 @@ pipeline {
 	
         // Kafka Cluster
         kafka_cluster_name = 'thdlcd0-uat-kafka-cluster'
+	kafk_bootstrap_name = 'kafka-bootstrap.thdlcd01-uat.aiaazure.biz'
 	
        	//Kafka bridge 
 
@@ -217,12 +218,45 @@ pipeline {
 		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.key}' -n ${NAMESPACE} | base64 --decode > 6.3/user.key'
 		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.p12}' -n ${NAMESPACE} | base64 --decode > 6.3/user.p12'
 		sh 'kubectl get secret ${user_kafka} -o jsonpath='{.data.user\.password}' -n ${NAMESPACE} | base64 --decode > 6.3/user.password'
+		
 	       // Import the entry in user.p12 into another keystore
+	       sh 'export USER_P12_FILE_PATH= 6.3/user.p12'
+	       sh 'export USER_KEY_PASSWORD_FILE_PATH= 6.3/user.password'
+	       sh 'export KEYSTORE_NAME=kafka-auth-keystore.jks'
+	       sh 'export KEYSTORE_PASSWORD=foobar'
+	       sh 'export PASSWORD=`cat $USER_KEY_PASSWORD_FILE_PATH'
+	       sh 'keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeystore $KEYSTORE_NAME -srckeystore $USER_P12_FILE_PATH -srcstorepass $PASSWORD -srcstoretype PKCS12'
+	       
+	       //Extract the cluster CA certificate and password
+	      
+               sh 'kubectl get secret ${kafka_cluster_name}-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.crt '
+               sh 'kubectl get secret ${kafka_cluster_name}-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.password '
+	       
+	       //Import it into truststore
+	       
+	       sh 'export CERT_FILE_PATH=6.3/ca.crt'
+	       sh 'export CERT_PASSWORD_FILE_PATH=6.3/ca.password'
+	       sh 'export KEYSTORE_LOCATION=6.3/cacerts'
+	       sh 'export PASSWORD=`cat $CERT_PASSWORD_FILE_PATH`'
+	       sh 'keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -noprompt'
 	       
 	       
-		
-
-		
+	      // Create properties file for Kafka CLI clients
+	      sh 'touch  6.3/client-ssl-auth.properties'
+	      sh 'echo "bootstrap.servers=${kafk_bootstrap_name}" >> 6.3/client-ssl-auth.properties'
+	      sh 'echo "security.protocol=SSL" >> 6.3/client-ssl-auth.properties'
+	      sh 'echo "ssl.truststore.location=6.3/cacerts" >> 6.3/client-ssl-auth.properties'
+	      sh 'echo "ssl.truststore.password=changeit" >> 6.3/client-ssl-auth.properties'
+	      sh 'echo "ssl.keystore.location=6.3/kafka-auth-keystore.jks" >> 6.3/client-ssl-auth.properties'
+	      sh 'echo "ssl.keystore.password=foobar" >> 6.3/client-ssl-auth.properties'   
+	      sh 'echo "ssl.key.password=`cat  6.3/ca.password'" >> 6.3/client-ssl-auth.properties'
+	      
+	      
+	      // Load data to topic
+	       sh "sed -i 's|kafka-ingress|${kafk_bootstrap_name}|g' 6.3/insert-tls.sh"
+	      sh 'sh 6.3/insert-tls.sh'
+	      
+	
             
             }
         }
