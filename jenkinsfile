@@ -19,12 +19,16 @@ pipeline {
         AZ_AKZ_USER = 'azure-chaiyapon'
         AZ_AKS_RESOUCE_GROUP = 'AKS-Cluster'
         
-	    	// AZURE AKS Cluster
+	 // AZURE AKS Cluster
         az_cluster_name = 'wintel'
         NAMESPACE = 'kafka'  
+	
+        // Kafka Cluster
+        kafka_cluster_name = 'thdlcd0-uat-kafka-cluster'
+	
+       	//Kafka bridge 
 
-		
-
+        kafak_bridge_ingres = 'kafka-bridge-thdlcd01-uat.aiaazure.biz'
 
     }
 
@@ -111,20 +115,56 @@ pipeline {
 	 stage('2.2: Load Data to Topic') {
              steps {
 	              
-                  // exec to pod 
-                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // copy scrip insert 
+		  sh 'kubcetl cp 2.2/insert.sh  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+		  sh 'kubcetl cp 2.2/file01  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+		  sh 'kubectl exec ${kafka_cluster_name}-kafka-0  /home/kafka/insert.sh  -n ${NAMESPACE}'
 
 
             }
         }
-        
-        
-        
-    
+	
+	
+	 stage('2.3: Consumer Data from Topic') {
+             steps {
+	              
+                  // Consumer
+		  sh 'kubectl exec ${kafka_cluster_name}-kafka-0  -n ${NAMESPACE} -- bin/kafka-console-consumer.sh --bootstrap-server  localhost:9092  --topic topic-a --from-beginning --timeout-ms 10000'
 
- 
+            }
+        }
+	
+	
+		 stage('3.1: Testing Down Zookeeper Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down zookeeper-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i zookeeper-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify zookeeper-0 up and running
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+	
+		 stage('4.1: Testing Client API Connect to Kafka bridge') {
+             steps {
+	              
+                  // list ingress
+                  sh 'kubectl get ingress -n ${NAMESPACE} '
+		  // list kafka bridge
+		  sh 'kubectl get pods -n ${NAMESPACE} | grep -i bridge'
+		  // healthy check kafka bridge  
+		  sh 'curl -v GET http://${kafak_bridge_ingres}/healthy'
+          
+            }
+        }
         
-        
+	
 
         
 
