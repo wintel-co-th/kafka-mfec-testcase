@@ -163,6 +163,23 @@ pipeline {
           
             }
         }
+	
+	
+		 stage('6.1: Testing Create Topic customer') {
+             steps {
+	              
+                  // list topic
+                  sh 'kubectl get kt -n ${NAMESPACE} '
+	          // create simple topic 
+		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.1/customer-topic.yaml"
+		  sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  examples/bridge/kafka-bridge-aia.yaml"
+		  sh 'kubectl  apply -f  6.1/customer-topic.yaml'	  
+		  // check topic ustomer
+		  sh 'kubectl get kt -n ${NAMESPACE} |grep -i customer '
+            
+            }
+        }
+	
         
 	
 
