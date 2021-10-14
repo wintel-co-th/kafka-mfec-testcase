@@ -106,9 +106,21 @@ pipeline {
 
             }
         }
+	
+	
+	 stage('2.2: Load Data to Topic') {
+             steps {
+	              
+                  // exec to pod 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+
+
+            }
+        }
         
         
         
+    
 
  
         
