@@ -14,7 +14,7 @@ export KEYSTORE_NAME=kafka-auth-keystore.jks
 export KEYSTORE_PASSWORD=foobar
 export PASSWORD=$(cat 6.3/user.password)
 
-cd 6.3/ && keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeystore $KEYSTORE_NAME -srckeystore $USER_P12_FILE_PATH -srcstorepass $PASSWORD -srcstoretype PKCS12
+keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeystore 6.3/$KEYSTORE_NAME -srckeystore $USER_P12_FILE_PATH -srcstorepass $PASSWORD -srcstoretype PKCS12 -noprompt
 
 ##Extract the cluster CA certificate and password
 
@@ -28,7 +28,7 @@ export CERT_PASSWORD_FILE_PATH=6.3/ca.password
 export KEYSTORE_LOCATION=6.3/cacerts
 export PASSWORD=$(cat 6.3/ca.password)
 
-cd 6.3/ && keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -noprompt
+keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -noprompt
 
 ##// Create properties file for Kafka CLI clients
 touch  6.3/client-ssl-auth.properties
