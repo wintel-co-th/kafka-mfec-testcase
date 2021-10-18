@@ -1,9 +1,9 @@
 #! /bin/sh
 
-kubectl get secret my-user -o jsonpath='{.data.user\.crt}' -n ${NAMESPACE} | base64 --decode > 6.3/user.crt
-kubectl get secret my-user -o jsonpath='{.data.user\.key}' -n ${NAMESPACE} | base64 --decode > 6.3/user.key
-kubectl get secret my-user -o jsonpath='{.data.user\.p12}' -n ${NAMESPACE} | base64 --decode > 6.3/user.p12
-kubectl get secret my-user -o jsonpath='{.data.user\.password}' -n ${NAMESPACE} | base64 --decode > 6.3/user.password
+kubectl get secret my-user -o jsonpath='{.data.user\.crt}' -n my-namespaces | base64 --decode > 6.3/user.crt
+kubectl get secret my-user -o jsonpath='{.data.user\.key}' -n my-namespaces | base64 --decode > 6.3/user.key
+kubectl get secret my-user -o jsonpath='{.data.user\.p12}' -n my-namespaces | base64 --decode > 6.3/user.p12
+kubectl get secret my-user -o jsonpath='{.data.user\.password}' -n my-namespaces | base64 --decode > 6.3/user.password
 
 
 ## Import the entry in user.p12 into another keystore
@@ -18,8 +18,8 @@ cd 6.3/ && keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeysto
 
 ##Extract the cluster CA certificate and password
 
-kubectl get secret my-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.crt
-kubectl get secret my-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.password
+kubectl get secret my-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n my-namespaces | base64 --decode > 6.3/ca.crt
+kubectl get secret my-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n my-namespaces | base64 --decode > 6.3/ca.password
 
 ##Import it into truststore
 
