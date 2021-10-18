@@ -12,7 +12,7 @@ export USER_P12_FILE_PATH=6.3/user.p12
 export USER_KEY_PASSWORD_FILE_PATH=6.3/user.password
 export KEYSTORE_NAME=kafka-auth-keystore.jks
 export KEYSTORE_PASSWORD=foobar
-export PASSWORD=`cat $USER_KEY_PASSWORD_FILE_PATH
+export PASSWORD=$(cat 6.3/user.password)
 
 cd 6.3/ && keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeystore $KEYSTORE_NAME -srckeystore $USER_P12_FILE_PATH -srcstorepass $PASSWORD -srcstoretype PKCS12
 
@@ -26,7 +26,7 @@ kubectl get secret my-cluster-cluster-ca-cert -o jsonpath='{.data.ca\.password}'
 export CERT_FILE_PATH=6.3/ca.crt
 export CERT_PASSWORD_FILE_PATH=6.3/ca.password
 export KEYSTORE_LOCATION=6.3/cacerts
-export PASSWORD=`cat $CERT_PASSWORD_FILE_PATH`
+export PASSWORD=$(cat 6.3/ca.password)
 
 cd 6.3/ && keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -noprompt
 
