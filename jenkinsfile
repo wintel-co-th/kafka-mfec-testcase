@@ -24,12 +24,12 @@ pipeline {
         NAMESPACE = 'kafka'  
 	
         // Kafka Cluster
-        kafka_cluster_name = 'thdlcd0-uat-kafka-cluster'
-	kafk_bootstrap_name = 'kafka-bootstrap.thdlcd01-uat.aiaazure.biz'
+        kafka_cluster_name = 'thdlcd3-uat-kafka-cluster'
+	kafk_bootstrap_name = 'kafka-bootstrap.thdlcd03-uat.aiaazure.biz'
 	
        	//Kafka bridge 
 
-        kafak_bridge_ingres = 'kafka-bridge-thdlcd01-uat.aiaazure.biz'
+        kafak_bridge_ingres = 'kafka-bridge-thdlcd03-uat.aiaazure.biz'
 	
 	// authentication
 	user_kafka = 'chaiyapon'
