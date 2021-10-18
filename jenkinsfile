@@ -118,31 +118,6 @@ pipeline {
 		sh 'sh user-crt.sh '
 
 	       
-	       //Extract the cluster CA certificate and password
-	      
-              // sh 'kubectl get secret ${kafka_cluster_name}-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.crt '
-              // sh 'kubectl get secret ${kafka_cluster_name}-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n ${NAMESPACE} | base64 --decode > 6.3/ca.password '
-	       
-	       //Import it into truststore
-	       
-	      // sh 'export CERT_FILE_PATH=6.3/ca.crt'
-	      // sh 'export CERT_PASSWORD_FILE_PATH=6.3/ca.password'
-	     // sh 'export KEYSTORE_LOCATION=6.3/cacerts'
-	     //  sh 'export PASSWORD=`cat $CERT_PASSWORD_FILE_PATH`'
-	     //  sh 'keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -noprompt'
-	       
-	       
-	      // Create properties file for Kafka CLI clients
-	    //  sh 'touch  6.3/client-ssl-auth.properties'
-	     // sh 'echo "bootstrap.servers=${kafk_bootstrap_name}" >> 6.3/client-ssl-auth.properties'
-	    //  sh 'echo "security.protocol=SSL" >> 6.3/client-ssl-auth.properties'
-	    //  sh 'echo "ssl.truststore.location=6.3/cacerts" >> 6.3/client-ssl-auth.properties'
-	   //   sh 'echo "ssl.truststore.password=changeit" >> 6.3/client-ssl-auth.properties'
-	   //   sh 'echo "ssl.keystore.location=6.3/kafka-auth-keystore.jks" >> 6.3/client-ssl-auth.properties'
-	   //   sh 'echo "ssl.keystore.password=foobar" >> 6.3/client-ssl-auth.properties'   
-	   //   sh 'echo "ssl.key.password=`cat  6.3/ca.password'" >> 6.3/client-ssl-auth.properties'
-
-            
             }
         }
         
