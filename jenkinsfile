@@ -112,10 +112,10 @@ pipeline {
 		sh 'kubectl get ku -n ${NAMESPACE} '
 		
 		// Extract and configure the user credentials
-	        sh "sed -i 's|my-user|${user_kafka}|g' user-crt.sh"
-		sh "sed -i 's|my-cluster|${kafka_cluster_name}|g' user-crt.sh"
-		sh "sed -i 's|kafka-ingress|${kafk_bootstrap_name}|g' user-crt.sh"
-		sh 'sh user-crt.sh '
+	        sh "sed -i 's|my-user|${user_kafka}|g' kafka_cluster_auth.sh"
+		sh "sed -i 's|my-cluster|${kafka_cluster_name}|g' kafka_cluster_auth.sh"
+		sh "sed -i 's|kafka-ingress|${kafk_bootstrap_name}|g' kafka_cluster_auth.sh"
+		sh 'sh kafka_cluster_auth.sh '
 
 	       
             }
