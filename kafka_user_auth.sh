@@ -38,7 +38,7 @@ echo "ssl.truststore.location=6.3/cacerts" >> 6.3/client-ssl-auth.properties
 echo "ssl.truststore.password=changeit" >> 6.3/client-ssl-auth.properties
 echo "ssl.keystore.location=6.3/kafka-auth-keystore.jks" >> 6.3/client-ssl-auth.properties
 echo "ssl.keystore.password=foobar" >> 6.3/client-ssl-auth.properties
-echo "ssl.key.password=`cat  6.3/ca.password'" >> 6.3/client-ssl-auth.properties
+echo "ssl.key.password=$(cat 6.3/ca.password)" >> 6.3/client-ssl-auth.properties
 
 
 ## // Load data to topic
