@@ -100,6 +100,7 @@ pipeline {
 		// check user 
 		sh 'kubectl get ku -n ${NAMESPACE}'
 		
+		
             
             }
         }
@@ -110,7 +111,7 @@ pipeline {
 	              
                 // Check  user chaiyapon with tls already exist
 		sh 'kubectl get ku -n ${NAMESPACE} '
-		
+		sh 'kubectl apply -f  6.3/topic-b.yaml|| true'
 		// Extract and configure the user credentials
 	        sh "sed -i 's|my_user|${user_kafka}|g' kafka_user_auth.sh"
 		sh "sed -i 's|my_cluster|${kafka_cluster_name}|g' kafka_user_auth.sh"
