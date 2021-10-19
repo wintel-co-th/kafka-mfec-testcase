@@ -25,7 +25,7 @@ pipeline {
 	
         // Kafka Cluster
         kafka_cluster_name = 'thdlcd3-uat-kafka-cluster'
-	kafk_bootstrap_name = 'kafka-bootstrap.thdlcd03-uat.aiaazure.biz'
+	kafk_bootstrap_name = 'kafka-bootstrap.thdlcd3-uat.aiaazure.biz'
 	
        	//Kafka bridge 
 
