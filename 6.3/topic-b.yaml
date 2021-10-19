@@ -4,7 +4,7 @@ metadata:
   name: topic-b
   namespace: kafka
   labels:
-    strimzi.io/cluster: my-cluster
+    strimzi.io/cluster: my_cluster
 spec:
   partitions: 1
   replicas: 1
