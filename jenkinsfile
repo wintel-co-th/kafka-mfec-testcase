@@ -111,20 +111,12 @@ pipeline {
 	              
                 // Check  user chaiyapon with tls already exist
 		sh 'kubectl get ku -n ${NAMESPACE} '
-		// creat topic 
-		//sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.3/topic-b.yaml"
-		//sh "sed -i 's|my_cluster|${kafka_cluster_name}|g' 6.3/topic-b.yaml"
-		//sh 'kubectl apply -f  6.3/topic-b.yaml|| true'
 		// Extract and configure the user credentials
 	        sh "sed -i 's|my_user|${user_kafka}|g' kafka_user_auth.sh"
 		sh "sed -i 's|my_cluster|${kafka_cluster_name}|g' kafka_user_auth.sh"
 		sh "sed -i 's|kafka_nemspaces|${NAMESPACE}|g' kafka_user_auth.sh"
 		sh "sed -i 's|kafka_bootstrap|${kafka_bootstrap_name}|g' kafka_user_auth.sh"
 		sh 'sh kafka_user_auth.sh'
-		//echo "echo ================================ logs operator================================="
-		//sh "kubectl logs `kubectl get pods -o name -n kafka |grep -i strimzi-cluster-operator` -n kafka"
-		echo "echo ================================ logs kafka================================="
-                //sh "kubectl logs `kubectl get pods -o name -n kafka |grep -i kafka-0` -n kafka"
 	
             }
         }
