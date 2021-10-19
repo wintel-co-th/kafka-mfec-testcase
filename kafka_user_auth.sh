@@ -56,7 +56,7 @@ echo "this is client-ssl-auth.properties $(cat 6.3/client-ssl-auth.properties)"
 
 echo "===============Load data to topic================================================="
 
-cat file02 | kafka_2.12-2.8.0/bin/kafka-console-producer.sh --broker-list kafka_bootstrap:443 --producer.config 6.3/client-ssl-auth.properties  --topic topic-b $1
+cat file02 | kafka_2.12-2.8.0/bin/kafka-console-producer.sh --broker-list kafka_bootstrap:443 --producer.config 6.3/client-ssl-auth.properties  --topic topic-b $1 --timeout 1000
 
 
 echo "================comsumer data from topic==========================================" 
