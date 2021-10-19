@@ -29,7 +29,7 @@ pipeline {
 	
        	//Kafka bridge 
 
-        kafak_bridge_ingres = 'kafka-bridge-thdlcd03-uat.aiaazure.biz'
+        kafak_bridge_ingres = 'kafka-bridge-thdlcd3-uat.aiaazure.biz'
 	
 	// authentication
 	user_kafka = 'chaiyapon'
