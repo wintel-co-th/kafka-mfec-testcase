@@ -1,15 +1,15 @@
 #! /bin/sh
 
-kafka_nemspaces=kafka
-kafka_bootstrap=kafka-bootstrap.thdlcd3-uat.aiaazure.biz
-my_user=chaiyapon
-my_cluster=thdlcd3-uat-kafka-cluster
+#kafka_nemspaces=kafka
+#kafka_bootstrap=kafka-bootstrap.thdlcd3-uat.aiaazure.biz
+#my_user=chaiyapon
+#my_cluster=thdlcd3-uat-kafka-cluster
 
 
-kubectl get secret $my_user -o jsonpath='{.data.user\.crt}' -n $kafka_nemspaces | base64 --decode > 6.3/user.crt
-kubectl get secret $my_user -o jsonpath='{.data.user\.key}' -n $kafka_nemspaces | base64 --decode > 6.3/user.key
-kubectl get secret $my_user -o jsonpath='{.data.user\.p12}' -n $kafka_nemspaces | base64 --decode > 6.3/user.p12
-kubectl get secret $my_user -o jsonpath='{.data.user\.password}' -n $kafka_nemspaces | base64 --decode > 6.3/user.password
+kubectl get secret my_user -o jsonpath='{.data.user\.crt}' -n kafka_nemspaces | base64 --decode > 6.3/user.crt
+kubectl get secret my_user -o jsonpath='{.data.user\.key}' -n kafka_nemspaces | base64 --decode > 6.3/user.key
+kubectl get secret my_user -o jsonpath='{.data.user\.p12}' -n kafka_nemspaces | base64 --decode > 6.3/user.p12
+kubectl get secret my_user -o jsonpath='{.data.user\.password}' -n kafka_nemspaces | base64 --decode > 6.3/user.password
 
 
 echo "==============Import the entry in user.p12 into another keystore=============="
@@ -26,8 +26,8 @@ keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeystore $KEYSTOR
 
 echo "==============Extract the cluster CA certificate and password================="
 
-kubectl get secret $my_cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n $kafka_nemspaces | base64 --decode > 6.3/ca.crt
-kubectl get secret $my_cluster-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n $kafka_nemspaces | base64 --decode > 6.3/ca.password
+kubectl get secret my_cluster-cluster-ca-cert -o jsonpath='{.data.ca\.crt}'   -n kafka_nemspaces | base64 --decode > 6.3/ca.crt
+kubectl get secret my_cluster-cluster-ca-cert -o jsonpath='{.data.ca\.password}'   -n kafka_nemspaces | base64 --decode > 6.3/ca.password
 
 echo "==============Import it into truststore======================================="
 
@@ -44,7 +44,7 @@ keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $K
 echo "============== Create properties file for Kafka CLI clients===================="
 $(rm -rf  6.3/client-ssl-auth.properties)
 touch  6.3/client-ssl-auth.properties
-echo "bootstrap.servers=$kafka_bootstrap:443" >> 6.3/client-ssl-auth.properties
+echo "bootstrap.servers=kafka_bootstrap:443" >> 6.3/client-ssl-auth.properties
 echo "security.protocol=SSL" >> 6.3/client-ssl-auth.properties
 echo "ssl.truststore.location=6.3/cacerts" >> 6.3/client-ssl-auth.properties
 echo "ssl.truststore.password=changeit" >> 6.3/client-ssl-auth.properties
@@ -56,9 +56,9 @@ echo "this is client-ssl-auth.properties $(cat 6.3/client-ssl-auth.properties)"
 
 echo "===============Load data to topic================================================="
 
-cat file02 | kafka_2.12-2.8.0/bin/kafka-console-producer.sh --broker-list $kafka_bootstrap:443 --producer.config 6.3/client-ssl-auth.properties  --topic topic-a $1
+cat file02 | kafka_2.12-2.8.0/bin/kafka-console-producer.sh --broker-list kafka_bootstrap:443 --producer.config 6.3/client-ssl-auth.properties  --topic topic-a $1
 
 
 echo "================comsumer data from topic==========================================" 
 
-kafka_2.12-2.8.0/bin/kafka-console-consumer.sh --bootstrap-server $kafka_bootstrap:443  --topic topic-a --consumer.config 6.3/client-ssl-auth.properties --from-beginning --timeout-ms 10000
+kafka_2.12-2.8.0/bin/kafka-console-consumer.sh --bootstrap-server kafka_bootstrap:443  --topic topic-a --consumer.config 6.3/client-ssl-auth.properties --from-beginning --timeout-ms 10000
