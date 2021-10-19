@@ -117,7 +117,8 @@ pipeline {
 		sh "sed -i 's|kafka_nemspaces|${NAMESPACE}|g' kafka_user_auth.sh"
 		sh "sed -i 's|kafka_bootstrap|${kafk_bootstrap_name}|g' kafka_user_auth.sh"
 		//sh 'sh kafka_user_auth.sh'
-		sh "kubectl logs "$(kubectl get pods -o name -n kafka |grep -i strimzi-cluster-operator)" -n kafka"
+		sh 'kubectl get pods -o name -n kafka |grep -i strimzi-cluster-operator | kubectl logs $1 -n kafka'
+		//sh "kubectl logs $(kubectl get pods -o name -n kafka |grep -i strimzi-cluster-operator) -n kafka"
 
 	       
             }
