@@ -52,7 +52,7 @@ echo "ssl.keystore.location=6.3/kafka-auth-keystore.jks" >> 6.3/client-ssl-auth.
 echo "ssl.keystore.password=foobar" >> 6.3/client-ssl-auth.properties
 echo "ssl.key.password=$(cat 6.3/user.password)" >> 6.3/client-ssl-auth.properties
 
-echo "this is client-ssl-auth.properties $(cat 6.3/client-ssl-auth.properties)"
+echo " $(cat 6.3/client-ssl-auth.properties)"
 
 echo "===============Load data to topic================================================="
 
