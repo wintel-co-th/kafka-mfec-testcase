@@ -39,7 +39,7 @@ pipeline {
 	
 	// IP edge Node
 	
-	edge_ip = ''
+	edge_ip = '20.205.169.228'
 	
 	
 
