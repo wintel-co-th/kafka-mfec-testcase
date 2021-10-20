@@ -5,6 +5,9 @@
 #my_user=chaiyapon
 #my_cluster=thdlcd3-uat-kafka-cluster
 
+$(rm -rf  6.3/client-ssl-auth.properties)
+$(rm -rf  6.3/*)
+$(ls -lrth  6.3/)
 
 kubectl get secret my_user -o jsonpath='{.data.user\.crt}' -n kafka_nemspaces | base64 --decode > 6.3/user.crt
 kubectl get secret my_user -o jsonpath='{.data.user\.key}' -n kafka_nemspaces | base64 --decode > 6.3/user.key
@@ -42,8 +45,6 @@ echo this is $PASSWORD
 keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -deststorepass $TRUSTSTORE_PASSWORD -noprompt
 
 echo "============== Create properties file for Kafka CLI clients===================="
-$(rm -rf  6.3/client-ssl-auth.properties)
-$(rm -rf  6.3/*)
 $(ls -lrth  6.3/)
 touch  6.3/client-ssl-auth.properties
 echo "bootstrap.servers=kafka_bootstrap:443" >> 6.3/client-ssl-auth.properties
