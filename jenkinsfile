@@ -83,6 +83,112 @@ pipeline {
                 }
             }
         }
+	
+	
+	
+	
+	 stage('2.1: Testing Down Kafka Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down kafk-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify kafka-o up and running
+                   sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+        
+        
+    	 stage('2.1: Testing Down Kafka Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down kafk-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify kafka-o up and running
+                   sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+	
+	
+	 stage('2.2: Load Data to Topic') {
+             steps {
+	              
+                  // copy scrip insert 
+		  sh 'kubcetl cp 2.2/insert.sh  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+		  sh 'kubcetl cp 2.2/file01  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+		  sh 'kubectl exec ${kafka_cluster_name}-kafka-0  /home/kafka/insert.sh  -n ${NAMESPACE}'
+
+
+            }
+        }
+	
+	
+	 stage('2.3: Consumer Data from Topic') {
+             steps {
+	              
+                  // Consumer
+		  sh 'kubectl exec ${kafka_cluster_name}-kafka-0  -n ${NAMESPACE} -- bin/kafka-console-consumer.sh --bootstrap-server  localhost:9092  --topic topic-a --from-beginning --timeout-ms 10000'
+
+            }
+        }
+	
+	
+		 stage('3.1: Testing Down Zookeeper Cluster') {
+             steps {
+	              
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down zookeeper-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i zookeeper-0) || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify zookeeper-0 up and running
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+	
+		 stage('4.1: Testing Client API Connect to Kafka bridge') {
+             steps {
+	              
+                  // list ingress
+                  sh 'kubectl get ingress -n ${NAMESPACE} '
+		  // list kafka bridge
+		  sh 'kubectl get pods -n ${NAMESPACE} | grep -i bridge'
+		  // healthy check kafka bridge  
+		  sh 'curl -v GET http://${kafak_bridge_ingres}/healthy'
+          
+            }
+        }
+	
+	
+		 stage('6.1: Testing Create Topic customer') {
+             steps {
+	              
+                  // list topic
+                  sh 'kubectl get kt -n ${NAMESPACE} '
+	          // create simple topic 
+		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.1/customer-topic.yaml"
+		  sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  examples/bridge/kafka-bridge-aia.yaml"
+		  sh 'kubectl  apply -f  6.1/customer-topic.yaml'	  
+		  // check topic customer
+		  sh 'kubectl get kt -n ${NAMESPACE} |grep -i customer '
+            
+            }
+        }
+
 		
 	
 	
