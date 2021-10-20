@@ -46,7 +46,7 @@ echo this is $PASSWORD
 keytool -importcert -alias strimzi-kafka-cert -file $CERT_FILE_PATH -keystore $KEYSTORE_LOCATION -keypass $PASSWORD -deststorepass $TRUSTSTORE_PASSWORD -noprompt
 
 echo "============== Create properties file for Kafka CLI clients===================="
-$(ls -lrth  6.3/)
+echo "$(ls -lrth  6.3/)"
 touch  6.3/client-ssl-auth.properties
 echo "bootstrap.servers=kafka_bootstrap:443" >> 6.3/client-ssl-auth.properties
 echo "security.protocol=SSL" >> 6.3/client-ssl-auth.properties
