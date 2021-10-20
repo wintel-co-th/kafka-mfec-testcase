@@ -1,0 +1,19 @@
+apiVersion: "kafka.strimzi.io/v1beta2"
+kind: "KafkaConnector"
+metadata:
+  name: "postgres-connector"
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka-connect-cluster
+spec:
+  class: "io.confluent.connect.jdbc.JdbcSourceConnector"
+  tasksMax: 1
+  config:
+    connection.url: "jdbc:postgresql://52.187.37.49:5432/player"
+    connection.user: "postgres"
+    connection.password: "mysecretpassword"
+    table.whitelist: "football_players"
+    mode: "timestamp"
+    timestamp.column.name: "modified_at,created_at"
+    poll.interval.ms: "2000"
+    topic.prefix: "pg_source_"
