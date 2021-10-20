@@ -105,7 +105,7 @@ pipeline {
 		  sh "sed -i 's|ip_edge|${edge_ip}|g'  5.1/jdbc/kafka-jdbc.yaml|| true"
 		  sh "cat  5.1/jdbc/kafka-jdbc.yaml|| true"
                   //  create JDBC connector
-                  sh 'kubectl apply 5.1/jdbc/kafka-jdbc.yaml|| true'
+                  sh 'kubectl apply -f 5.1/jdbc/kafka-jdbc.yaml|| true'
 		  sh 'sleep 5m'
 		  // verify jdbc connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
@@ -122,14 +122,14 @@ pipeline {
 		  // replace env
 		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  5.1/file/file-topic.yaml|| true"
 		  sh "sed -i 's|kafka-cluster|${kafka_cluster_name}|g' 5.1/file/file-topic.yaml|| true"
-		  sh 'kubectl apply 5.1/file/file-topic.yaml|| true'
+		  sh 'kubectl apply -f  5.1/file/file-topic.yaml|| true'
 		  
 		  
 		   sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/' 5.1/file/kafka-file.yaml|| true"
 		  sh "sed -i 's|my_connect_cluster|${kafka_connect_name}|g'  5.1/file/kafka-file.yaml|| true"
 		  sh "cat  5.1/file/kafka-file.yaml|| true"
                   //  create File connector
-                  sh 'kubectl apply 5.1/file/kafka-file.yaml|| true'
+                  sh 'kubectl apply -f 5.1/file/kafka-file.yaml|| true'
 		  sh 'sleep 5m'
 		  // verify File connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
@@ -146,14 +146,14 @@ pipeline {
 		  // replace env
 		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  5.1/csv/csv-topic.yaml|| true"
 		   sh "sed -i 's|kafka-cluster|${kafka_cluster_name}|g'  5.1/csv/csv-topic.yaml|| true"
-		  sh 'kubectl apply 5.1/csv/csv-topic.yaml|| true|| true'
+		  sh 'kubectl apply -f 5.1/csv/csv-topic.yaml|| true|| true'
 		  
 		  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/' 5.1/csv/kafka-csv.yaml|| true"
 		  sh "sed -i 's|my_connect_cluster|${kafka_connect_name}|g' 5.1/csv/kafka-csv.yaml|| true"
 		  sh "sed -i 's|ip_edge|${edge_ip}|g'  5.1/csv/kafka-csv.yaml|| true"
 		  sh "cat  5.1/csv/kafka-csv.yaml|| true"
                   //  create csv connector
-                  sh 'kubectl apply 5.1/csv/kafka-csv.yaml|| true'
+                  sh 'kubectl apply -f 5.1/csv/kafka-csv.yaml|| true'
 		  sh 'sleep 5m'
 		  // verify csv connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
