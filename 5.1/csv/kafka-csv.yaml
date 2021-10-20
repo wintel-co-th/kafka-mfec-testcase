@@ -4,7 +4,7 @@ metadata:
   name: sftp-csv-connector
   namespace: kafka
   labels:
-    strimzi.io/cluster: kafka-connect-cluster
+    strimzi.io/cluster: my_connect_cluster
 spec:
   class: io.confluent.connect.sftp.SftpCsvSourceConnector
   tasksMax: 2
@@ -17,7 +17,7 @@ spec:
     input.file.pattern: csv-sftp-source.csv
     sftp.username: foo
     sftp.password: password
-    sftp.host: 52.187.164.6
+    sftp.host: ip_edge
     sftp.port: 2222
     kafka.topic: sftp-csv-testing-topic
     schema.generation.enabled: true
