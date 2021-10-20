@@ -7,7 +7,8 @@
 
 $(rm -rf  6.3/client-ssl-auth.properties)
 $(rm -rf  6.3/*)
-$(ls -lrth  6.3/)
+echo "==============clean path=============="
+echo "$(ls -lrth  6.3/)"
 
 kubectl get secret my_user -o jsonpath='{.data.user\.crt}' -n kafka_nemspaces | base64 --decode > 6.3/user.crt
 kubectl get secret my_user -o jsonpath='{.data.user\.key}' -n kafka_nemspaces | base64 --decode > 6.3/user.key
