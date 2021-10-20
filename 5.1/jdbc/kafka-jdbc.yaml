@@ -4,7 +4,7 @@ metadata:
   name: "postgres-connector"
   namespace: kafka
   labels:
-    strimzi.io/cluster: kafka-connect-cluster
+    strimzi.io/cluster: my_connect_cluster
 spec:
   class: "io.confluent.connect.jdbc.JdbcSourceConnector"
   tasksMax: 1
