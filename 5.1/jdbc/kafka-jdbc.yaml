@@ -9,7 +9,7 @@ spec:
   class: "io.confluent.connect.jdbc.JdbcSourceConnector"
   tasksMax: 1
   config:
-    connection.url: "jdbc:postgresql://52.187.37.49:5432/player"
+    connection.url: "jdbc:postgresql://ip_edge/player"
     connection.user: "postgres"
     connection.password: "mysecretpassword"
     table.whitelist: "football_players"
