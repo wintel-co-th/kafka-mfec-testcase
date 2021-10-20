@@ -106,7 +106,7 @@ pipeline {
 		  sh "cat  5.1/jdbc/kafka-jdbc.yaml|| true"
                   //  create JDBC connector
                   sh 'kubectl apply -f 5.1/jdbc/kafka-jdbc.yaml|| true'
-		  sh 'sleep 5m'
+		 // sh 'sleep 5m'
 		  // verify jdbc connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
                   
@@ -130,7 +130,7 @@ pipeline {
 		  sh "cat  5.1/file/kafka-file.yaml|| true"
                   //  create File connector
                   sh 'kubectl apply -f 5.1/file/kafka-file.yaml|| true'
-		  sh 'sleep 5m'
+		 // sh 'sleep 5m'
 		  // verify File connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
                   
@@ -154,7 +154,7 @@ pipeline {
 		  sh "cat  5.1/csv/kafka-csv.yaml|| true"
                   //  create csv connector
                   sh 'kubectl apply -f 5.1/csv/kafka-csv.yaml|| true'
-		  sh 'sleep 5m'
+		//  sh 'sleep 5m'
 		  // verify csv connector
 		  sh 'kubectl get kctr -n ${NAMESPACE} '
                   
