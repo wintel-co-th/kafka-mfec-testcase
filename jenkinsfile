@@ -92,6 +92,165 @@ pipeline {
         }
 	
 	
+	       stage('2.1: Testing Down Kafka Cluster') {
+             steps {
+                
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down kafk-0
+                 /// sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) -n ${NAMESPACE} || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  ///sh 'sleep 5m'
+                  // Verify kafka-o up and running
+                   sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+  
+  
+   stage('2.2: Load Data to Topic') {
+             steps {
+                
+                  // copy scrip insert 
+                 sh 'kubectl cp 2.2/insert.sh  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+                 sh 'kubectl cp 2.2/file01  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+                 sh 'kubectl exec ${kafka_cluster_name}-kafka-0  /home/kafka/insert.sh  -n ${NAMESPACE}'
+
+
+            }
+        }
+  
+  
+   stage('2.3: Consumer Data from Topic') {
+             steps {
+                
+                  // Consumer
+      sh 'kubectl exec ${kafka_cluster_name}-kafka-0  -n ${NAMESPACE} -- bin/kafka-console-consumer.sh --bootstrap-server  localhost:9092  --topic topic-a --from-beginning --timeout-ms 10000'
+
+            }
+        }
+  
+  
+     stage('3.1: Testing Down Zookeeper Cluster') {
+             steps {
+                
+                  // capture Before Down
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  // Down zookeeper-0
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i zookeeper-0) -n ${NAMESPACE} || true'
+                  // Pod are terminating and createing 
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+                  sh 'sleep 5m'
+                  // Verify zookeeper-0 up and running
+                  sh 'kubectl get pods -n ${NAMESPACE} '
+
+            }
+        }
+  
+     stage('4.1: Testing Client API Connect to Kafka bridge') {
+             steps {
+                
+                  // list ingress
+                  sh 'kubectl get ingress -n ${NAMESPACE} '
+                  // list kafka bridge
+                  sh 'kubectl get pods -n ${NAMESPACE} | grep -i bridge'
+                  // healthy check kafka bridge  
+                  sh 'curl -v GET http://${kafak_bridge_ingres}/healthy'
+          
+            }
+        }
+
+
+
+
+
+        
+   stage('5.1.1: Testing Connecter Load Data to JDBC Connect') {
+             steps {
+                
+                  // List connector
+                  sh 'kubectl get kctr -n ${NAMESPACE} '
+                 // replace env
+                 sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  5.1/jdbc/kafka-jdbc.yaml|| true"
+                 sh "sed -i 's|my_connect_cluster|${kafka_connect_name}|g'  5.1/jdbc/kafka-jdbc.yaml|| true"
+                 sh "sed -i 's|ip_edge|${edge_ip}|g'  5.1/jdbc/kafka-jdbc.yaml|| true"
+                 sh "cat  5.1/jdbc/kafka-jdbc.yaml|| true"
+                 //  create JDBC connector
+                 sh 'kubectl apply -f 5.1/jdbc/kafka-jdbc.yaml|| true'
+                 sh 'sleep 5m'
+                // verify jdbc connector
+                 sh 'kubectl get kctr -n ${NAMESPACE} '
+                  
+
+            }
+        }
+  
+     stage('5.1.2: Testing Connecter Load Data to File Connect') {
+             steps {
+                
+                  // List connector
+                  sh 'kubectl get kctr -n ${NAMESPACE} '
+                   // replace env
+                 sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  5.1/file/file-topic.yaml|| true"
+                 sh "sed -i 's|kafka-cluster|${kafka_cluster_name}|g' 5.1/file/file-topic.yaml|| true"
+                 sh 'kubectl apply -f  5.1/file/file-topic.yaml|| true'
+      
+      
+                 sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/' 5.1/file/kafka-file.yaml|| true"
+                 sh "sed -i 's|my_connect_cluster|${kafka_connect_name}|g'  5.1/file/kafka-file.yaml|| true"
+                 sh "cat  5.1/file/kafka-file.yaml|| true"
+                  //  create File connector
+                  sh 'kubectl apply -f 5.1/file/kafka-file.yaml|| true'
+                  sh 'sleep 5m'
+                  // verify File connector
+                  sh 'kubectl get kctr -n ${NAMESPACE} '
+                  
+                  
+            }
+        }
+  
+   stage('5.1.3: Testing Connecter Load Data to CSV File') {
+             steps {
+                
+                  // List connector
+                  sh 'kubectl get kctr -n ${NAMESPACE} '
+                  // replace env
+                  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  5.1/csv/csv-topic.yaml|| true"
+                  sh "sed -i 's|kafka-cluster|${kafka_cluster_name}|g'  5.1/csv/csv-topic.yaml|| true"
+                  sh 'kubectl apply -f 5.1/csv/csv-topic.yaml|| true|| true'
+      
+                  sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/' 5.1/csv/kafka-csv.yaml|| true"
+                  sh "sed -i 's|my_connect_cluster|${kafka_connect_name}|g' 5.1/csv/kafka-csv.yaml|| true"
+                  sh "sed -i 's|ip_edge|${edge_ip}|g'  5.1/csv/kafka-csv.yaml|| true"
+                  sh "cat  5.1/csv/kafka-csv.yaml|| true"
+                  //  create csv connector
+                  sh 'kubectl apply -f 5.1/csv/kafka-csv.yaml|| true'
+                  sh 'sleep 5m'
+                  // verify csv connector
+                  sh 'kubectl get kctr -n ${NAMESPACE} '
+                  
+
+            }
+        }
+        
+  
+  
+     stage('6.1: Testing Create Topic customer') {
+             steps {
+                
+                  // list topic
+                  sh 'kubectl get kt -n ${NAMESPACE} '
+                  // create simple topic 
+                 sh "sed -i 's/namespace: .*/namespace: ${NAMESPACE}/'  6.1/customer-topic.yaml"
+                 sh "sed -i 's|my-cluster|${kafka_cluster_name}|g'  6.1/customer-topic.yaml"
+                 sh 'kubectl  apply -f  6.1/customer-topic.yaml'   
+                 // check topic customer
+                 sh 'kubectl get kt -n ${NAMESPACE} |grep -i customer '
+            
+            }
+        }
+	
 	
         
         
