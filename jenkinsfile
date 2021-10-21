@@ -101,10 +101,10 @@ pipeline {
                   // capture Before Down
                   sh 'kubectl get pods -n ${NAMESPACE} '
                   // Down kafk-0
-                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) -n ${NAMESPACE} || true'
+                 /// sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) -n ${NAMESPACE} || true'
                   // Pod are terminating and createing 
                   sh 'kubectl get pods -n ${NAMESPACE} '
-                  sh 'sleep 5m'
+                  ///sh 'sleep 5m'
                   // Verify kafka-o up and running
                    sh 'kubectl get pods -n ${NAMESPACE} '
 
@@ -116,8 +116,8 @@ pipeline {
              steps {
                 
                   // copy scrip insert 
-                 sh 'kubcetl cp 2.2/insert.sh  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
-                 sh 'kubcetl cp 2.2/file01  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+                 sh 'kubectl cp 2.2/insert.sh  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
+                 sh 'kubectl cp 2.2/file01  ${kafka_cluster_name}-kafka-0:/home/kafka  -n ${NAMESPACE}'
                  sh 'kubectl exec ${kafka_cluster_name}-kafka-0  /home/kafka/insert.sh  -n ${NAMESPACE}'
 
 
@@ -181,7 +181,7 @@ pipeline {
                  sh "cat  5.1/jdbc/kafka-jdbc.yaml|| true"
                  //  create JDBC connector
                  sh 'kubectl apply -f 5.1/jdbc/kafka-jdbc.yaml|| true'
-                // sh 'sleep 5m'
+                 sh 'sleep 5m'
                 // verify jdbc connector
                  sh 'kubectl get kctr -n ${NAMESPACE} '
                   
@@ -205,7 +205,7 @@ pipeline {
                  sh "cat  5.1/file/kafka-file.yaml|| true"
                   //  create File connector
                   sh 'kubectl apply -f 5.1/file/kafka-file.yaml|| true'
-                  // sh 'sleep 5m'
+                  sh 'sleep 5m'
                   // verify File connector
                   sh 'kubectl get kctr -n ${NAMESPACE} '
                   
@@ -229,7 +229,7 @@ pipeline {
                   sh "cat  5.1/csv/kafka-csv.yaml|| true"
                   //  create csv connector
                   sh 'kubectl apply -f 5.1/csv/kafka-csv.yaml|| true'
-                  //  sh 'sleep 5m'
+                  sh 'sleep 5m'
                   // verify csv connector
                   sh 'kubectl get kctr -n ${NAMESPACE} '
                   
