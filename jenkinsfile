@@ -93,22 +93,6 @@ pipeline {
 	
 	
 	
-	
-	stage('2.1: Testing Down Kafka Cluster') {
-             steps {
-                
-                  // capture Before Down
-                  sh 'kubectl get pods -n ${NAMESPACE} '
-                  // Down kafk-0
-                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
-                  // Pod are terminating and createing 
-                  sh 'kubectl get pods -n ${NAMESPACE} '
-                  sh 'sleep 5m'
-                  // Verify kafka-o up and running
-                   sh 'kubectl get pods -n ${NAMESPACE} '
-
-            }
-        }
         
         
        stage('2.1: Testing Down Kafka Cluster') {
