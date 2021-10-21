@@ -101,7 +101,7 @@ pipeline {
                   // capture Before Down
                   sh 'kubectl get pods -n ${NAMESPACE} '
                   // Down kafk-0
-                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) || true'
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i kafka-0) -n ${NAMESPACE} || true'
                   // Pod are terminating and createing 
                   sh 'kubectl get pods -n ${NAMESPACE} '
                   sh 'sleep 5m'
@@ -141,7 +141,7 @@ pipeline {
                   // capture Before Down
                   sh 'kubectl get pods -n ${NAMESPACE} '
                   // Down zookeeper-0
-                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i zookeeper-0) || true'
+                  sh 'kubectl delete $( kubectl get pods -o name -n kafka |grep -i zookeeper-0) -n ${NAMESPACE} || true'
                   // Pod are terminating and createing 
                   sh 'kubectl get pods -n ${NAMESPACE} '
                   sh 'sleep 5m'
