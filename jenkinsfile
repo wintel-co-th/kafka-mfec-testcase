@@ -172,9 +172,6 @@ pipeline {
         }
 
 
-
-
-
         
    stage('5.1.1: Testing Connecter Load Data to JDBC Connect') {
              steps {
@@ -257,6 +254,22 @@ pipeline {
 
             }
         }
+	
+	
+	
+	   stage('5.1.4: Testing Connecter Debezium  SQL Server ') {
+             steps {
+                
+
+		  
+
+		   sh "echo ============  Create Debezium SQL Server connector =============="
+
+
+            }
+        }
+	
+	
         
   
   
@@ -282,12 +295,6 @@ pipeline {
         }
 	
 	
-        
-        
-
-
-    
-  
   
      stage('6.2: Testing Create User') {
              steps {
@@ -320,7 +327,7 @@ pipeline {
 
 		 sh "echo ============  Check  user ${user_kafka}  with tls already exist =============="
                  sh 'kubectl get ku -n ${NAMESPACE} '
-		  sh "echo ============   Extract and configure the user credentials =============="
+		 sh "echo ============   Extract and configure the user credentials =============="
                  sh "sed -i 's|my_user|${user_kafka}|g' kafka_user_auth.sh"
                  sh "sed -i 's|my_cluster|${kafka_cluster_name}|g' kafka_user_auth.sh"
                  sh "sed -i 's|kafka_nemspaces|${NAMESPACE}|g' kafka_user_auth.sh"
