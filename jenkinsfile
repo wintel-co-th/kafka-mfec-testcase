@@ -270,8 +270,34 @@ pipeline {
         }
 	
 	
-        
-  
+	
+	   stage('5.1.5: Testing Connecter Debezium  Oracle DB') {
+             steps {
+                
+
+		  
+
+		  sh "echo ============  Create Debezium Oracle DB connector =============="
+
+
+            }
+        }
+	
+	
+	   stage('5.1.6: Testing Connecter Debezium  PostgreSQL ') {
+             steps {
+                
+
+		  
+
+		  sh "echo ============  Create Debezium PostgreSQL connector =============="
+
+
+
+            }
+        }
+	
+	
   
      stage('6.1: Testing Create Topic customer') {
              steps {
