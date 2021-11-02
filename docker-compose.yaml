@@ -1,11 +1,11 @@
 version: '3.1'
 services:
   sftp:
-    image: chanvoyage/kafka-sftp:v5.0
+    image: chanvoyage/kafka-sftp:v6.0
     ports:
-      - 2222:22
+      - "2222:22"
     command: foo:password:1001
   postgres:
     image: chanvoyage/postgres:v5.0
     ports:
-      - 5432:5432  
+      - 5432:5432
